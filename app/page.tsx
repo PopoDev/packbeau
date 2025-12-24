@@ -7,12 +7,10 @@ import Items from "@/components/sections/items";
 import Navbar from "@/components/sections/navbar";
 import Pricing from "@/components/sections/pricing";
 import Stats from "@/components/sections/stats";
-import { LayoutLines } from "@/components/ui/layout-lines";
 
 export default function Home() {
   return (
     <main className="bg-background text-foreground min-h-screen w-full">
-      <LayoutLines />
       <Navbar />
       <Hero />
       <Items />

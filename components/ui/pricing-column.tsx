@@ -9,14 +9,14 @@ import { Badge } from "./badge";
 import { Button } from "./button";
 
 const pricingColumnVariants = cva(
-  "max-w-container relative flex flex-col gap-6 overflow-hidden rounded-2xl p-8 shadow-xl",
+  "max-w-7xl relative flex flex-col gap-6 overflow-hidden rounded-2xl p-8 shadow-xl",
   {
     variants: {
       variant: {
         default: "glass-1 to-transparent dark:glass-3",
         glow: "glass-2 to-trasparent dark:glass-3 after:content-[''] after:absolute after:-top-[128px] after:left-1/2 after:h-[128px] after:w-[100%] after:max-w-[960px] after:-translate-x-1/2 after:rounded-[50%] dark:after:bg-foreground/30 after:blur-[72px]",
-        "glow-brand":
-          "glass-3 from-card/100 to-card/100 dark:glass-4 after:content-[''] after:absolute after:-top-[128px] after:left-1/2 after:h-[128px] after:w-[100%] after:max-w-[960px] after:-translate-x-1/2 after:rounded-[50%] after:bg-brand-foreground/70 after:blur-[72px]",
+        "glow-primary":
+          "glass-3 from-card/100 to-card/100 dark:glass-4 after:content-[''] after:absolute after:-top-[128px] after:left-1/2 after:h-[128px] after:w-[100%] after:max-w-[960px] after:-translate-x-1/2 after:rounded-[50%] after:bg-primary-foreground/70 after:blur-[72px]",
       },
     },
     defaultVariants: {
@@ -72,7 +72,7 @@ export function PricingColumn({
       <hr
         className={cn(
           "via-foreground/60 absolute top-0 left-[10%] h-[1px] w-[80%] border-0 bg-linear-to-r from-transparent to-transparent",
-          variant === "glow-brand" && "via-brand",
+          variant === "glow-primary" && "via-primary",
         )}
       />
       <div className="flex flex-col gap-7">
@@ -122,7 +122,7 @@ export function PricingColumn({
           {showDiscounts && (
             <div className="h-6">
               {discountCode && (
-                <p className="text-brand-foreground text-sm font-medium">
+                <p className="text-primary-foreground text-sm font-medium">
                   {discountPercentage}% off with code{" "}
                   <Badge variant="brand-secondary">{discountCode}</Badge>
                 </p>
