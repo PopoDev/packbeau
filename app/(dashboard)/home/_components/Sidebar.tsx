@@ -10,7 +10,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
 
@@ -33,11 +32,9 @@ export function HomeSidebar() {
 
       <div className="px-4 pb-4">
         <Button variant="secondary" className="w-full justify-center" asChild>
-          <Link href="/">New chat</Link>
+          <Link href="/">New Project</Link>
         </Button>
       </div>
-
-      <SidebarSeparator />
 
       <SidebarContent>
         <SidebarGroup>
@@ -62,8 +59,6 @@ export function HomeSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarSeparator />
 
       <SidebarFooter className="px-4 py-4">
         <SidebarMenu>

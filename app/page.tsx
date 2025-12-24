@@ -1,12 +1,10 @@
-import Bento from "@/components/sections/bento";
-import CTA from "@/components/sections/cta";
-import FAQ from "@/components/sections/faq";
-import Footer from "@/components/sections/footer";
+import Navbar from "@/components/sections/navbar";
 import Hero from "@/components/sections/hero";
 import Items from "@/components/sections/items";
-import Navbar from "@/components/sections/navbar";
+import Bento from "@/components/sections/bento";
+import CTA from "@/components/sections/cta";
 import Pricing from "@/components/sections/pricing";
-import Stats from "@/components/sections/stats";
+import Footer from "@/components/sections/footer";
 
 export default function Home() {
   return (
@@ -15,9 +13,7 @@ export default function Home() {
       <Hero />
       <Items />
       <Bento />
-      <Stats />
       <Pricing />
-      <FAQ />
       <CTA />
       <Footer />
     </main>

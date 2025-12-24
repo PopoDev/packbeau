@@ -1,16 +1,12 @@
+import { ReactNode } from "react";
 import {
   BlocksIcon,
-  EclipseIcon,
-  FastForwardIcon,
+  CodeIcon,
   LanguagesIcon,
   MonitorSmartphoneIcon,
-  RocketIcon,
-  ScanFaceIcon,
-  SquarePenIcon,
+  PaletteIcon,
+  SunMoonIcon,
 } from "lucide-react";
-import { ReactNode } from "react";
-
-import { Item, ItemDescription,ItemIcon, ItemTitle } from "@/components/ui/item";
 import { Section } from "@/components/ui/section";
 
 interface ItemProps {
@@ -26,50 +22,40 @@ interface ItemsProps {
 }
 
 export default function Items({
-  title = "Everything you need. Nothing you don't.",
+  title = "Execute Fast with World-class Quality",
   items = [
     {
-      title: "Accessibility first",
-      description: "Fully WCAG 2.0 compliant, made with best a11y practices",
-      icon: <ScanFaceIcon className="size-5 stroke-1" />,
+      title: "Beautiful design",
+      description: "Professional and modern design that stands out",
+      icon: <PaletteIcon className="size-6" />,
+    },
+    {
+      title: "Easy to customize",
+      description: "Flexible and modular design to match your product or brand",
+      icon: <BlocksIcon className="size-6" />,
+    },
+    {
+      title: "Best practice code",
+      description:
+        "Built with best practices in mind for scalability and maintainability",
+      icon: <CodeIcon className="size-6" />,
     },
     {
       title: "Responsive design",
       description: "Looks and works great on any device and screen size",
-      icon: <MonitorSmartphoneIcon className="size-5 stroke-1" />,
+      icon: <MonitorSmartphoneIcon className="size-6" />,
     },
     {
       title: "Light and dark mode",
       description:
-        "Seamless switching between color schemes, 6 themes included",
-      icon: <EclipseIcon className="size-5 stroke-1" />,
+        "Easily choose themes and switch between light and dark mode",
+      icon: <SunMoonIcon className="size-6" />,
     },
     {
-      title: "Easy to customize",
-      description: "Flexible options to match your product or brand",
-      icon: <BlocksIcon className="size-5 stroke-1" />,
-    },
-    {
-      title: "Top-level performance",
-      description: "Made for lightning-fast load times and smooth interactions",
-      icon: <FastForwardIcon className="size-5 stroke-1" />,
-    },
-    {
-      title: "Production ready",
-      description: "Thoroughly tested and launch-prepared",
-      icon: <RocketIcon className="size-5 stroke-1" />,
-    },
-    {
-      title: "Made for localisation",
+      title: "Go international",
       description:
-        "Easy to implement support for multiple languages and regions",
-      icon: <LanguagesIcon className="size-5 stroke-1" />,
-    },
-    {
-      title: "CMS friendly",
-      description:
-        "Built to work with your any headless content management system",
-      icon: <SquarePenIcon className="size-5 stroke-1" />,
+        "Support internationalization for multiple languages and regions",
+      icon: <LanguagesIcon className="size-6" />,
     },
   ],
   className,
@@ -77,19 +63,23 @@ export default function Items({
   return (
     <Section className={className}>
       <div className="max-w-7xl mx-auto flex flex-col items-center gap-6 sm:gap-20">
-        <h2 className="max-w-[560px] text-center text-3xl leading-tight font-semibold sm:text-5xl sm:leading-tight">
+        <h2 className="max-w-md text-center text-3xl leading-tight font-semibold sm:text-5xl sm:leading-tight">
           {title}
         </h2>
         {items !== false && items.length > 0 && (
-          <div className="grid auto-rows-fr grid-cols-2 gap-0 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
+          <div className="grid auto-rows-fr grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4">
             {items.map((item, index) => (
-              <Item key={index}>
-                <ItemTitle className="flex items-center gap-2">
-                  <ItemIcon>{item.icon}</ItemIcon>
-                  {item.title}
-                </ItemTitle>
-                <ItemDescription>{item.description}</ItemDescription>
-              </Item>
+              <div key={index} className="flex flex-col gap-2 p-2">
+                <div className="flex items-center gap-3">
+                  <div className="text-muted-foreground">{item.icon}</div>
+                  <h3 className="text-lg font-semibold sm:text-xl">
+                    {item.title}
+                  </h3>
+                </div>
+                <p className="text-muted-foreground max-w-2xs">
+                  {item.description}
+                </p>
+              </div>
             ))}
           </div>
         )}

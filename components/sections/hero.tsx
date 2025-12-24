@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Mockup, MockupFrame } from "@/components/ui/mockup";
-import Screenshot from "@/components/ui/screenshot";
 import { Section } from "@/components/ui/section";
 import { ArrowRightIcon } from "lucide-react";
+import Screenshot from "../ui/screenshot";
 
 interface HeroProps {
   title?: string;
@@ -17,8 +17,8 @@ interface HeroProps {
 }
 
 export default function Hero({
-  title = "Give your big idea the design it deserves",
-  description = "Professionally designed blocks and templates built with React, Shadcn/ui and Tailwind that will help your product stand out.",
+  title = "Design beautiful websites in minutes",
+  description = "Turn your ideas into websites that stand out using AI.",
   mockup = (
     <Screenshot
       srcLight="/dashboard-light.png"
@@ -31,9 +31,7 @@ export default function Hero({
   ),
   badge = (
     <Badge variant="outline" className="animate-appear">
-      <span className="text-muted-foreground">
-        New update is out!
-      </span>
+      <span className="text-muted-foreground">New update is out!</span>
     </Badge>
   ),
   className,
@@ -42,12 +40,12 @@ export default function Hero({
     <Section
       className={cn(
         "fade-bottom overflow-hidden pb-0 sm:pb-0 md:pb-0",
-        className,
+        className
       )}
     >
-      <div className="max-w-7xl mx-auto flex flex-col gap-12 pt-16 sm:gap-24">
+      <div className="max-w-7xl mx-auto flex flex-col gap-12 pt-8 sm:gap-24">
         <div className="flex flex-col items-center gap-6 text-center sm:gap-12">
-          {badge !== false && badge}
+          {/* {badge !== false && badge} */}
           <h1 className="text-foreground text-4xl leading-tight font-semibold text-balance drop-shadow-2xl sm:text-6xl sm:leading-tight md:text-8xl md:leading-tight">
             {title}
           </h1>
@@ -60,12 +58,10 @@ export default function Hero({
               <ArrowRightIcon className="size-3" />
             </Link>
           </Button>
-          
+
           {mockup !== false && (
             <div className="relative w-full pt-12">
-              <MockupFrame
-                size="small"
-              >
+              <MockupFrame size="small">
                 <Mockup
                   type="responsive"
                   className="bg-background/90 w-full rounded-xl border-0"
