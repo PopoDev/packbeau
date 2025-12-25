@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PackBeau - AI Website Designer",
+  title: "Packbeau - Design beautiful websites",
   description:
     "Turn your ideas into beautiful website mockups instantly with AI.",
 };

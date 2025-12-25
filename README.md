@@ -2,11 +2,24 @@
 
 AI Website Designer. Turn your ideas into beautiful website mockups instantly with AI.
 
+- Prototype: gather requirements, inspiration
+- Design: create website, mockups, workflows
+- Share: video and link
+
+## Copywriting
+
+- Theme: Cruise ship
+- Vision: Curiosity is the only limit.
+- CTA: Bring your ideas to life.
+
 ## Features
 
 - Chat interface: enter a prompt and get a streamed response.
 - Preview: live view of the app.
 - Design agent: use shadcn to create a design system.
+
+- Design prototype using AI
+- Import from Figma: design system, components, and pages
 
 ## Implementation
 
@@ -21,3 +34,13 @@ AI Website Designer. Turn your ideas into beautiful website mockups instantly wi
 ### Streaming AI Responses
 - **Convex Agent Integration**: Uses `@convex-dev/agent` with Vercel AI SDK for code generation
 - **Streaming UI**: Real-time text streaming with typing indicators and progress states
+
+## Input
+
+### CTA Message
+- "Bring your ideas to life."
+
+### Controls
+- Theme: dark/light mode
+- Brand colors: primary
+- Animations: yes/no
