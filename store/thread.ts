@@ -1,10 +1,18 @@
 import { create } from 'zustand';
 
+export interface ActionBadge {
+  type: 'write';
+  label: string;
+}
+
 export interface Message {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   createdAt: Date;
+  thinkingText?: string;
+  actionBadges?: ActionBadge[];
+  isThinking?: boolean;
 }
 
 export interface Thread {
@@ -18,77 +26,70 @@ export interface Thread {
 interface ThreadStore {
   threads: Thread[];
   createThread: (initialMessage: string) => string;
-  addMessage: (threadId: string, role: 'user' | 'assistant', content: string) => void;
+  addMessage: (
+    threadId: string, 
+    role: 'user' | 'assistant', 
+    content: string,
+    options?: {
+      thinkingText?: string;
+      actionBadges?: ActionBadge[];
+      isThinking?: boolean;
+    }
+  ) => void;
+  updateMessageThinking: (threadId: string, messageId: string, isThinking: boolean) => void;
   updateGeneratedCode: (threadId: string, code: string) => void;
   getThread: (threadId: string) => Thread | undefined;
 }
 
 const generateId = () => Math.random().toString(36).substring(2, 15);
 
-const MOCK_GENERATED_CODE = `import React from 'react';
+const MOCK_THINKING_TEXT = "Thinking...";
 
-export default function Portfolio() {
-  return (
-    <div className="min-h-screen bg-white">
-      <header className="flex items-center justify-between px-8 py-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Sarah Chen</h1>
-        <nav className="flex gap-8">
-          <a href="#work" className="text-gray-600 hover:text-gray-900">Work</a>
-          <a href="#about" className="text-gray-600 hover:text-gray-900">About</a>
-          <a href="#contact" className="text-gray-600 hover:text-gray-900">Contact</a>
-        </nav>
-      </header>
-      
-      <main className="flex flex-col items-center justify-center px-8 py-24">
-        <img 
-          src="/avatar.jpg" 
-          alt="Sarah Chen"
-          className="w-32 h-32 rounded-full object-cover mb-8"
-        />
-        <h2 className="text-5xl font-bold text-gray-900 mb-4">UI/UX Designer</h2>
-        <p className="text-xl text-gray-600 text-center max-w-2xl mb-8">
-          I craft meaningful digital experiences that connect people with
-          technology through thoughtful design and user-centered solutions.
-        </p>
-        <button className="px-8 py-3 bg-emerald-600 text-white rounded-full hover:bg-emerald-700 transition-colors">
-          View My Work
-        </button>
-      </main>
-    </div>
-  );
-}`;
+const MOCK_AI_RESPONSE = `I've crafted a modern AI landing page with a clean, *liquid glass* aesthetic.
 
-const MOCK_AI_RESPONSE = `Based on your requirements, I'll create a beautiful single-page design portfolio showcasing case studies with a clean, Mobbin-inspired aesthetic. This will focus on strong visual hierarchy, minimal design, and production-worthy quality.
+**What I've built:**
+- Hero section with bold headline and AI-powered input
+- Trusted by section with company logos
+- Feature cards with *glass morphism* effects
+- Showcase gallery with hover interactions
+- Pricing tiers with clear value propositions
+- Responsive footer with social links
 
-**Core Features:**
-- Clean hero section with designer introduction
-- Featured case studies with project previews
-- Interactive project cards with hover effects
-- Skills and process overview sections
-- Contact information with social links
-- Smooth scrolling and micro-interactions
-- Responsive design for all devices
+**Design highlights:**
+- Sophisticated blue accent palette matching your brand
+- Smooth slide-up animations for engagement
+- Clean typography with **Inter font family**
+- Mobile-responsive layout throughout
 
-**Design Elements:**
-- Sophisticated color palette with deep blues (#1e293b), vibrant accents (#3b82f6), and warm highlights (#f59e0b)
-- Clean typography with proper hierarchy and 150% line spacing for body text`;
+Learn more about design systems at [Tailwind CSS](https://tailwindcss.com) or [Radix UI](https://www.radix-ui.com).`;
+
+const MOCK_FOLLOWUP_RESPONSE = `I've updated the design based on your feedback. The changes are now reflected in the preview — take a look and let me know if we need to adjust course.`;
 
 export const useThreadStore = create<ThreadStore>((set, get) => ({
   threads: [],
   
   createThread: (initialMessage: string) => {
     const threadId = generateId();
-    const messageId = generateId();
+    const userMessageId = generateId();
+    const assistantMessageId = generateId();
     
     const newThread: Thread = {
       id: threadId,
       title: initialMessage.slice(0, 50) + (initialMessage.length > 50 ? '...' : ''),
       messages: [
         {
-          id: messageId,
+          id: userMessageId,
           role: 'user',
           content: initialMessage,
           createdAt: new Date(),
+        },
+        {
+          id: assistantMessageId,
+          role: 'assistant',
+          content: '',
+          createdAt: new Date(),
+          thinkingText: MOCK_THINKING_TEXT,
+          isThinking: true,
         },
       ],
       generatedCode: '',
@@ -99,15 +100,45 @@ export const useThreadStore = create<ThreadStore>((set, get) => ({
       threads: [...state.threads, newThread],
     }));
 
+    // Simulate AI response after delay
     setTimeout(() => {
-      get().addMessage(threadId, 'assistant', MOCK_AI_RESPONSE);
-      get().updateGeneratedCode(threadId, MOCK_GENERATED_CODE);
+      set((state) => ({
+        threads: state.threads.map((thread) =>
+          thread.id === threadId
+            ? {
+                ...thread,
+                messages: thread.messages.map((msg) =>
+                  msg.id === assistantMessageId
+                    ? {
+                        ...msg,
+                        content: MOCK_AI_RESPONSE,
+                        isThinking: false,
+                        actionBadges: [{ type: 'write' as const, label: 'Generated prototype' }],
+                      }
+                    : msg
+                ),
+                generatedCode: 'page.html',
+              }
+            : thread
+        ),
+      }));
     }, 1500);
     
     return threadId;
   },
   
-  addMessage: (threadId: string, role: 'user' | 'assistant', content: string) => {
+  addMessage: (
+    threadId: string, 
+    role: 'user' | 'assistant', 
+    content: string,
+    options?: {
+      thinkingText?: string;
+      actionBadges?: ActionBadge[];
+      isThinking?: boolean;
+    }
+  ) => {
+    const messageId = generateId();
+    
     set((state) => ({
       threads: state.threads.map((thread) =>
         thread.id === threadId
@@ -116,10 +147,11 @@ export const useThreadStore = create<ThreadStore>((set, get) => ({
               messages: [
                 ...thread.messages,
                 {
-                  id: generateId(),
+                  id: messageId,
                   role,
                   content,
                   createdAt: new Date(),
+                  ...options,
                 },
               ],
             }
@@ -127,11 +159,71 @@ export const useThreadStore = create<ThreadStore>((set, get) => ({
       ),
     }));
 
+    // If user sends a message, simulate AI thinking then response
     if (role === 'user') {
+      const thinkingMessageId = generateId();
+      
+      // Add thinking message
+      set((state) => ({
+        threads: state.threads.map((thread) =>
+          thread.id === threadId
+            ? {
+                ...thread,
+                messages: [
+                  ...thread.messages,
+                  {
+                    id: thinkingMessageId,
+                    role: 'assistant',
+                    content: '',
+                    createdAt: new Date(),
+                    thinkingText: 'Updating your design...',
+                    isThinking: true,
+                  },
+                ],
+              }
+            : thread
+        ),
+      }));
+      
+      // Update with response after delay
       setTimeout(() => {
-        get().addMessage(threadId, 'assistant', 'I\'ve updated the design based on your feedback. The changes are now reflected in the preview.');
+        set((state) => ({
+          threads: state.threads.map((thread) =>
+            thread.id === threadId
+              ? {
+                  ...thread,
+                  messages: thread.messages.map((msg) =>
+                    msg.id === thinkingMessageId
+                      ? {
+                          ...msg,
+                          content: MOCK_FOLLOWUP_RESPONSE,
+                          isThinking: false,
+                        }
+                      : msg
+                  ),
+                }
+              : thread
+          ),
+        }));
       }, 1000);
     }
+  },
+  
+  updateMessageThinking: (threadId: string, messageId: string, isThinking: boolean) => {
+    set((state) => ({
+      threads: state.threads.map((thread) =>
+        thread.id === threadId
+          ? {
+              ...thread,
+              messages: thread.messages.map((msg) =>
+                msg.id === messageId
+                  ? { ...msg, isThinking }
+                  : msg
+              ),
+            }
+          : thread
+      ),
+    }));
   },
   
   updateGeneratedCode: (threadId: string, code: string) => {

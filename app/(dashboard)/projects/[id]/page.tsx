@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { ChatInput } from '@/components/ChatInput';
 import { ChatMessage } from '@/components/ChatMessage';
 import { CodePreview } from '@/components/CodePreview';
@@ -27,29 +27,32 @@ export default function ProjectPage() {
   };
 
   return (
-      <div className="flex h-screen">
-        <div className="flex w-1/2 flex-col border-r border-border">
-          <div className="flex-1 overflow-auto p-6">
-            <div className="flex flex-col gap-6">
-              {thread.messages.map((message) => (
-                <ChatMessage key={message.id} message={message} />
-              ))}
-              <div ref={messagesEndRef} />
-            </div>
-          </div>
-
-          <div className="border-t border-border p-4">
-            <ChatInput
-              onSubmit={handleSubmit}
-              placeholder="Send a message..."
-              variant="compact"
-            />
+    <div className="flex h-screen">
+      <div className="relative flex w-1/3 flex-col overflow-hidden bg-background">
+        {/* Chat Messages */}
+        <div className="relative z-30 flex-1 overflow-auto p-6">
+          <div className="flex flex-col gap-6">
+            {thread.messages.map((message) => (
+              <ChatMessage key={message.id} message={message} />
+            ))}
+            <div ref={messagesEndRef} />
           </div>
         </div>
 
-        <div className="flex w-1/2 flex-col p-4">
-          <CodePreview code={thread.generatedCode} />
+        {/* Chat Input */}
+        <div className="relative z-30 p-4">
+          <ChatInput
+            onSubmit={handleSubmit}
+            placeholder="Send a message..."
+            variant="compact"
+          />
         </div>
       </div>
+
+      {/* Preview Panel - Clean White/Card Background */}
+      <div className="flex flex-1 flex-col bg-background p-4">
+        <CodePreview code={thread.generatedCode} />
+      </div>
+    </div>
   );
 }

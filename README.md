@@ -1,46 +1,53 @@
 # Packbeau
 
-AI Website Designer. Turn your ideas into beautiful website mockups instantly with AI.
+Prototype your idea, get user feedback, and iterate in production.
+The AI design tool for fast iteration and validation.
 
-- Prototype: gather requirements, inspiration
-- Design: create website, mockups, workflows
-- Share: video and link
+- Vision: Curiosity is the only limit
+- CTA: Bring your ideas to life
 
-## Copywriting
+## What It Does
+AI-powered tool that transforms feature descriptions into shareable prototypes with automated explainer videos. Optimized for stakeholder alignment and rapid validation.
 
-- Theme: Cruise ship
-- Vision: Curiosity is the only limit.
-- CTA: Bring your ideas to life.
+**Core Flow:**  
+Text prompt → Prototype design → Auto-generated demo → Feedback → Iterate
 
-## Features
+## Target Users
+Early-stage startup teams without dedicated designers who need to validate features and communicate concepts quickly.
 
-- Chat interface: enter a prompt and get a streamed response.
-- Preview: live view of the app.
-- Design agent: use shadcn to create a design system.
+## Key Features
 
-- Design prototype using AI
-- Import from Figma: design system, components, and pages
+### Ideation
+- Natural language feature description
+- Optional screenshot context
 
-## Implementation
+### Prototype Generation
+- Single-page, scroll-based HTML+CSS prototypes
+- Mock data and simple interactions (hover, toggle, expand)
+- Natural language iteration
+- Automatic versioning
 
-- Use Convex Agent component for agentic tasks
-- Integrated Vercel AI SDK for code generation
-- Designed system prompt to use MCP tools and existing components
+### Share & Explain
+- Auto-generated explainer video (scroll-based walkthrough with annotations)
+- Interactive demo link with inline commenting
+- No signup required for viewers
 
-### Chat Interface
-- **Thread Management**: Users can create multiple app projects, each with its own conversation thread
-- **Thread Persistence**: All conversations are stored in Convex database with automatic title generation from first message
+## Product Principles
+1. **Speed over polish:** 5 minutes from idea to share link
+2. **Alignment over fidelity:** Stakeholder clarity, not pixel perfection
+3. **Narrative over navigation:** Single-page stories, not multi-screen apps
+4. **Validation over production:** Prototypes for decision-making, not deployment
 
-### Streaming AI Responses
-- **Convex Agent Integration**: Uses `@convex-dev/agent` with Vercel AI SDK for code generation
-- **Streaming UI**: Real-time text streaming with typing indicators and progress states
+## Technical Stack
+- **AI Code Generation:** Vercel AI SDK with Convex Agent
+- **Thread Management:** Multi-project support with Convex database
+- **Streaming UI:** Real-time generation with progress indicators
+- **Design System:** shadcn/ui components
 
-## Input
+## Documentation
+- `/docs/MVP.md` - Complete product requirements and scope
+- `/docs/Feature.md` - Technical feature specification
+- `/docs/Design.md` - Design system and UI guidelines
 
-### CTA Message
-- "Bring your ideas to life."
-
-### Controls
-- Theme: dark/light mode
-- Brand colors: primary
-- Animations: yes/no
+## Success Criteria
+Users repeatedly generate, iterate, and share feature concepts within Packbeau instead of using Figma, Loom, and scattered feedback tools.

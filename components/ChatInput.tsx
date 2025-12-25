@@ -6,7 +6,6 @@ import {
   Sun,
   Moon,
   Check,
-  CheckIcon,
   Sparkles,
   Ban,
 } from "lucide-react";
@@ -25,11 +24,13 @@ import { Button } from "@/components/ui/button";
 interface ChatInputProps {
   onSubmit: (message: string) => void;
   placeholder?: string;
+  variant?: "default" | "compact";
 }
 
 export function ChatInput({
   onSubmit,
   placeholder = "Ask Packbeau to create a web app that...",
+  variant = "default",
 }: ChatInputProps) {
   const [message, setMessage] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -48,11 +49,14 @@ export function ChatInput({
     }
   };
 
+  const isCompact = variant === "compact";
+
   return (
     <div
       className={cn(
-        "relative w-full max-w-2xl rounded-2xl p-3 glass-morphism flex flex-col items-center justify-center transition-all duration-300",
-        isFocused && "ring-2 ring-white/20"
+        "relative w-full rounded-2xl p-3 glass-morphism flex flex-col items-center justify-center transition-all duration-300",
+        isFocused && "ring-2 ring-white/20",
+        !isCompact && "max-w-2xl"
       )}
     >
       {/* Textarea */}
@@ -63,30 +67,32 @@ export function ChatInput({
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
-        rows={3}
+        rows={isCompact ? 1 : 3}
         className={cn(
           "w-full resize-none bg-transparent text-white placeholder:text-white/40 focus:outline-none",
           "p-2 text-base leading-relaxed",
-          "min-h-[120px]"
+          isCompact ? "min-h-[40px]" : "min-h-[120px]"
         )}
       />
 
       <div className="flex items-center justify-between w-full">
-        <ChatControls />
+        {!isCompact && <ChatControls />}
+        {isCompact && <div />}
         <button
           onClick={handleSubmit}
           disabled={!message.trim()}
           aria-label="Send message"
           className={cn(
-            "h-10 w-10 flex items-center justify-center rounded-full border",
+            "flex items-center justify-center rounded-full border",
             "transition-all duration-200 ease-out",
             "disabled:opacity-50 disabled:cursor-not-allowed",
+            isCompact ? "h-8 w-8" : "h-10 w-10",
             message.trim()
               ? "bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/40 hover:scale-110"
               : "bg-background"
           )}
         >
-          <ArrowUp className="h-5 w-5" strokeWidth={2.5} />
+          <ArrowUp className={cn(isCompact ? "h-4 w-4" : "h-5 w-5")} strokeWidth={2.5} />
         </button>
       </div>
     </div>
