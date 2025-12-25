@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Monitor, Code2, Tablet, Smartphone, ArrowRight } from 'lucide-react';
+import { Monitor, Code2, Tablet, Smartphone, ArrowRight, Zap } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface CodePreviewProps {
   code: string;
@@ -41,18 +42,18 @@ export function CodePreview({ code }: CodePreviewProps) {
   const isScaledViewport = viewport !== 'desktop';
 
   return (
-    <div className="flex h-full flex-col bg-card rounded-lg border border-border overflow-hidden">
+    <div className="flex h-full flex-col bg-card rounded-2xl border border-border overflow-hidden">
       {/* Top Control Bar */}
-      <div className="flex items-center justify-between border-b border-border px-4 py-2 h-12">
+      <div className="flex items-center justify-between border-b border-border px-4 py-3">
         {/* Left: View Toggle */}
-        <div className="flex items-center rounded-md border border-border overflow-hidden">
+        <div className="inline-flex items-center rounded-xl border border-border overflow-hidden">
           <button
             onClick={() => setActiveTab('preview')}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-colors',
+              'flex items-center gap-2 px-3 py-1.5 text-sm font-medium transition-colors',
               activeTab === 'preview'
-                ? 'bg-accent text-foreground'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                ? 'bg-accent'
+                : 'hover:bg-accent/50'
             )}
           >
             <Monitor className="h-4 w-4" />
@@ -61,10 +62,10 @@ export function CodePreview({ code }: CodePreviewProps) {
           <button
             onClick={() => setActiveTab('code')}
             className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-colors border-l border-border',
+              'flex items-center gap-2 px-3 py-1.5 text-sm font-medium transition-colors border-l border-border',
               activeTab === 'code'
-                ? 'bg-accent text-foreground'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent/50'
+                ? 'bg-accent'
+                : 'hover:bg-accent/50'
             )}
           >
             <Code2 className="h-4 w-4" />
@@ -74,75 +75,63 @@ export function CodePreview({ code }: CodePreviewProps) {
 
         {/* Center: Responsive Viewport Controls */}
         <div className="hidden sm:flex items-center gap-1">
-          <button
+          <Button
+            size="icon-sm"
+            variant={viewport === 'desktop' ? 'secondary' : 'ghost'}
             onClick={() => setViewport('desktop')}
-            className={cn(
-              'h-8 w-8 flex items-center justify-center rounded-md transition-colors',
-              viewport === 'desktop'
-                ? 'text-primary bg-primary/10'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-            )}
             aria-label="Desktop view"
           >
             <Monitor className="h-4 w-4" />
-          </button>
-          <button
+          </Button>
+          <Button
+            size="icon-sm"
+            variant={viewport === 'tablet' ? 'secondary' : 'ghost'}
             onClick={() => setViewport('tablet')}
-            className={cn(
-              'h-8 w-8 flex items-center justify-center rounded-md transition-colors',
-              viewport === 'tablet'
-                ? 'text-primary bg-primary/10'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-            )}
             aria-label="Tablet view"
           >
             <Tablet className="h-4 w-4" />
-          </button>
-          <button
+          </Button>
+          <Button
+            size="icon-sm"
+            variant={viewport === 'mobile' ? 'secondary' : 'ghost'}
             onClick={() => setViewport('mobile')}
-            className={cn(
-              'h-8 w-8 flex items-center justify-center rounded-md transition-colors',
-              viewport === 'mobile'
-                ? 'text-primary bg-primary/10'
-                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-            )}
             aria-label="Mobile view"
           >
             <Smartphone className="h-4 w-4" />
-          </button>
+          </Button>
         </div>
 
-        {/* Right: Share Button */}
-        <button
-          onClick={handleShare}
-          className={cn(
-            'flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium',
-            'bg-primary text-primary-foreground hover:bg-primary/90 transition-colors'
-          )}
-        >
-          Share
-          <ArrowRight className="h-4 w-4" />
-        </button>
+        {/* Right: Upgrade + Share Buttons */}
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="gap-1.5">
+            <Zap className="h-3.5 w-3.5" />
+            Upgrade
+          </Button>
+          <Button size="sm" onClick={handleShare} className="gap-1.5">
+            Share
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-auto">
+      <div className="flex-1 overflow-auto bg-background">
         {activeTab === 'code' ? (
-          <pre className="p-6 text-sm text-muted-foreground font-mono leading-relaxed overflow-auto h-full">
+          <pre className="p-6 text-sm text-muted-foreground font-mono leading-relaxed">
             <code>{htmlContent || 'Loading code...'}</code>
           </pre>
         ) : (
           <div
             className={cn(
-              'h-full transition-all duration-300',
-              isScaledViewport ? 'bg-muted/50 p-4 flex justify-center' : 'bg-white'
+              'h-full transition-all',
+              isScaledViewport ? 'bg-muted/30 p-8 flex justify-center' : 'bg-white'
             )}
           >
             {code ? (
               <div
                 className={cn(
-                  'h-full transition-all duration-300',
-                  isScaledViewport && 'shadow-lg rounded-lg overflow-hidden border border-border'
+                  'h-full transition-all',
+                  isScaledViewport && 'shadow-2xl rounded-2xl overflow-hidden border border-border'
                 )}
                 style={{
                   width: VIEWPORT_WIDTHS[viewport],
@@ -157,8 +146,13 @@ export function CodePreview({ code }: CodePreviewProps) {
                 />
               </div>
             ) : (
-              <div className="flex h-full items-center justify-center text-muted-foreground">
-                Preview will appear here after generation...
+              <div className="flex h-full flex-col items-center justify-center gap-4">
+                <div className="flex items-center justify-center w-20 h-20 rounded-2xl bg-muted border border-border">
+                  <Monitor className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Your preview will appear here
+                </p>
               </div>
             )}
           </div>

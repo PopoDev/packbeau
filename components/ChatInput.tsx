@@ -1,14 +1,7 @@
 "use client";
 
 import { useState, KeyboardEvent } from "react";
-import {
-  ArrowUp,
-  Sun,
-  Moon,
-  Check,
-  Sparkles,
-  Ban,
-} from "lucide-react";
+import { ArrowUp, Sun, Moon, Check, Sparkles, Ban } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Popover,
@@ -54,12 +47,11 @@ export function ChatInput({
   return (
     <div
       className={cn(
-        "relative w-full rounded-2xl p-3 glass-morphism flex flex-col items-center justify-center transition-all duration-300",
-        isFocused && "ring-2 ring-white/20",
-        !isCompact && "max-w-2xl"
+        "relative w-full rounded-2xl p-3 border transition-all",
+        isFocused ? "bg-input border-ring" : "bg-muted border-border",
+        !isCompact && "max-w-2xl glass-morphism"
       )}
     >
-      {/* Textarea */}
       <textarea
         value={message}
         onChange={(e) => setMessage(e.target.value)}
@@ -69,16 +61,16 @@ export function ChatInput({
         placeholder={placeholder}
         rows={isCompact ? 1 : 3}
         className={cn(
-          "w-full resize-none bg-transparent text-white placeholder:text-white/40 focus:outline-none",
+          "w-full resize-none bg-transparent text-foreground focus:outline-none",
           "p-2 text-base leading-relaxed",
-          isCompact ? "min-h-[40px]" : "min-h-[120px]"
+          isCompact ? "min-h-[40px]" : "min-h-[100px]"
         )}
       />
 
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full mt-1">
         {!isCompact && <ChatControls />}
         {isCompact && <div />}
-        <button
+        <Button
           onClick={handleSubmit}
           disabled={!message.trim()}
           aria-label="Send message"
@@ -88,12 +80,15 @@ export function ChatInput({
             "disabled:opacity-50 disabled:cursor-not-allowed",
             isCompact ? "h-8 w-8" : "h-10 w-10",
             message.trim()
-              ? "bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 text-white shadow-lg shadow-blue-500/40 hover:scale-110"
+              ? "bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 text-white hover:scale-110"
               : "bg-background"
           )}
         >
-          <ArrowUp className={cn(isCompact ? "h-4 w-4" : "h-5 w-5")} strokeWidth={2.5} />
-        </button>
+          <ArrowUp
+            className={cn(isCompact ? "h-4 w-4" : "h-5 w-5")}
+            strokeWidth={2.5}
+          />
+        </Button>
       </div>
     </div>
   );

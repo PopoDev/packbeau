@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, ChevronDown } from 'lucide-react';
+import { Lightbulb, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface ThinkingStateProps {
@@ -14,39 +14,30 @@ export function ThinkingState({ text, isThinking, defaultExpanded = false }: Thi
   const [isExpanded, setIsExpanded] = useState(defaultExpanded || isThinking);
 
   return (
-    <div className="mb-3">
+    <div>
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className={cn(
-          'flex items-center gap-2 px-3 py-2 rounded-lg transition-all duration-200',
-          'bg-white/[0.04] hover:bg-white/[0.08]',
-          'text-sm text-muted-foreground'
-        )}
+        className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-accent transition-colors text-xs text-muted-foreground"
       >
-        <Sparkles 
-          className={cn(
-            'h-4 w-4',
-            isThinking && 'animate-pulse text-primary'
-          )} 
-        />
+        <Lightbulb className="h-3.5 w-3.5" />
         <span className="font-medium">
-          {isThinking ? text : 'Thought for a moment'}
+          {isThinking ? 'Thinking...' : 'Thought for a moment'}
         </span>
-        <ChevronDown 
+        <ChevronRight 
           className={cn(
-            'h-4 w-4 ml-auto transition-transform duration-200',
-            isExpanded && 'rotate-180'
+            'h-3 w-3 transition-transform',
+            isExpanded && 'rotate-90'
           )}
         />
       </button>
       
       <div
         className={cn(
-          'overflow-hidden transition-all duration-200 ease-out',
-          isExpanded ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'
+          'overflow-hidden transition-all',
+          isExpanded ? 'max-h-32 mt-2' : 'max-h-0'
         )}
       >
-        <div className="px-3 py-2 text-sm text-muted-foreground/70">
+        <div className="px-3 py-2 text-xs text-muted-foreground leading-relaxed border-l-2 border-border ml-2">
           {text}
         </div>
       </div>
