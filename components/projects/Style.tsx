@@ -67,8 +67,6 @@ function groupColors(colors: ColorToken[]): Record<string, ColorToken[]> {
   const groups: Record<string, ColorToken[]> = {
     'Core': [],
     'Primary': [],
-    'Card & Popover': [],
-    'Muted': [],
     'Other': [],
   };
 
@@ -79,10 +77,6 @@ function groupColors(colors: ColorToken[]): Record<string, ColorToken[]> {
       groups['Primary'].push(color);
     } else if (lowerName.includes('background') || lowerName.includes('foreground')) {
       groups['Core'].push(color);
-    } else if (lowerName.includes('card') || lowerName.includes('popover')) {
-      groups['Card & Popover'].push(color);
-    } else if (lowerName.includes('muted')) {
-      groups['Muted'].push(color);
     } else {
       groups['Other'].push(color);
     }
@@ -167,11 +161,7 @@ export function StyleViewer({ style }: StyleViewerProps) {
             <div className="flex flex-col items-center gap-2">
               <div className="w-16 h-16 bg-primary rounded-xl" />
               <span className="text-xs text-muted-foreground">xl</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 bg-primary rounded-full" />
-              <span className="text-xs text-muted-foreground">full</span>
-            </div>
+            </div> 
           </div>
         </section>
       </div>

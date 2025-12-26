@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils';
 import { Monitor, Layers, Palette, Tablet, Smartphone, ArrowRight, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { GeneratedProject } from '@/types/project';
-import { bundleProject } from '@/lib/bundler';
+import { bundleProjectWithGallery } from '@/lib/bundler';
 import { ComponentBrowser } from './Component';
 import { StyleViewer } from './Style';
 
@@ -26,6 +26,7 @@ export function Preview({ project }: PreviewProps) {
   const [activeTab, setActiveTab] = useState<TabType>('page');
   const [viewport, setViewport] = useState<ViewportType>('desktop');
   const [bundledHtml, setBundledHtml] = useState<string>('');
+  const [componentGalleryHtml, setComponentGalleryHtml] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,6 +34,7 @@ export function Preview({ project }: PreviewProps) {
   const bundle = useCallback(async () => {
     if (!project) {
       setBundledHtml('');
+      setComponentGalleryHtml('');
       return;
     }
 
@@ -40,8 +42,9 @@ export function Preview({ project }: PreviewProps) {
     setError(null);
 
     try {
-      const html = await bundleProject(project);
-      setBundledHtml(html);
+      const { fullAppBundle, componentGalleryBundle } = await bundleProjectWithGallery(project);
+      setBundledHtml(fullAppBundle);
+      setComponentGalleryHtml(componentGalleryBundle);
     } catch (err) {
       console.error('Bundle error:', err);
       setError(err instanceof Error ? err.message : 'Failed to bundle project');
@@ -158,7 +161,8 @@ export function Preview({ project }: PreviewProps) {
         {activeTab === 'component' && project && (
           <ComponentBrowser
             components={project.components}
-            style={project.style}
+            galleryBundle={componentGalleryHtml}
+            isLoading={isLoading}
           />
         )}
         {activeTab === 'style' && project && (
