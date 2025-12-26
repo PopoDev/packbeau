@@ -2,7 +2,6 @@ import { GeneratedProject } from '@/types/project';
 
 /**
  * Mock generated project data
- * Converted from public/page.html into structured JSON format
  */
 export const MOCK_PROJECT: GeneratedProject = {
   components: {
