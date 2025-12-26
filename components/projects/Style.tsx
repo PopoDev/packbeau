@@ -1,112 +1,104 @@
-'use client';
+"use client";
 
-import { useMemo } from 'react';
-import { cn } from '@/lib/utils';
+import { useMemo } from "react";
 
 interface StyleViewerProps {
   style: string;
 }
 
-interface ColorToken {
+interface DesignToken {
   name: string;
   cssVar: string;
   value: string;
 }
 
 /**
- * Parse CSS variables from style string
+ * Enhanced Parser to capture colors, radius, and fonts
  */
-function parseTokens(style: string): { colors: ColorToken[] } {
-  const colors: ColorToken[] = [];
-  
-  // Match CSS variables in :root
+function parseTokens(style: string) {
+  const tokens: DesignToken[] = [];
   const rootMatch = style.match(/:root\s*\{([^}]+)\}/);
-  if (!rootMatch) return { colors };
+  if (!rootMatch) return { colors: [], layout: {} as Record<string, string> };
 
   const rootContent = rootMatch[1];
   const varRegex = /--([\w-]+):\s*([^;]+);/g;
   let match;
 
+  const layout: Record<string, string> = {};
+
   while ((match = varRegex.exec(rootContent)) !== null) {
-    const [, name, value] = match;
+    const [_, name, value] = match;
     const trimmedValue = value.trim();
 
-    // Identify color tokens (oklch, rgb, hsl, hex, or named colors)
+    // Categorize tokens
     if (
-      trimmedValue.startsWith('oklch') ||
-      trimmedValue.startsWith('rgb') ||
-      trimmedValue.startsWith('hsl') ||
-      trimmedValue.startsWith('#') ||
-      ['white', 'black', 'transparent'].includes(trimmedValue)
+      trimmedValue.startsWith("oklch") ||
+      trimmedValue.startsWith("rgb") ||
+      trimmedValue.startsWith("hsl") ||
+      trimmedValue.startsWith("#") ||
+      ["white", "black", "transparent"].includes(trimmedValue)
     ) {
-      colors.push({
+      tokens.push({
         name: formatTokenName(name),
         cssVar: `--${name}`,
         value: trimmedValue,
       });
+    } else {
+      // Capture structural tokens (radius, font-family)
+      layout[name] = trimmedValue;
     }
   }
 
-  return { colors };
+  return { colors: tokens, layout };
 }
 
-/**
- * Format token name for display
- */
 function formatTokenName(name: string): string {
   return name
-    .split('-')
+    .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
-/**
- * Group colors by category
- */
-function groupColors(colors: ColorToken[]): Record<string, ColorToken[]> {
-  const groups: Record<string, ColorToken[]> = {
-    'Core': [],
-    'Primary': [],
-    'Other': [],
-  };
-
-  for (const color of colors) {
-    const lowerName = color.cssVar.toLowerCase();
-    
-    if (lowerName.includes('primary')) {
-      groups['Primary'].push(color);
-    } else if (lowerName.includes('background') || lowerName.includes('foreground')) {
-      groups['Core'].push(color);
-    } else {
-      groups['Other'].push(color);
-    }
-  }
-
-  // Remove empty groups
-  return Object.fromEntries(
-    Object.entries(groups).filter(([, tokens]) => tokens.length > 0)
-  );
+    .join(" ");
 }
 
 export function StyleViewer({ style }: StyleViewerProps) {
-  const { colors } = useMemo(() => parseTokens(style), [style]);
-  const groupedColors = useMemo(() => groupColors(colors), [colors]);
+  const { colors, layout } = useMemo(() => parseTokens(style), [style]);
+
+  const groupedColors = useMemo(() => {
+    const groups: Record<string, DesignToken[]> = {
+      Core: [],
+      Primary: [],
+      Other: [],
+    };
+    colors.forEach((c) => {
+      if (c.cssVar.includes("primary")) groups["Primary"].push(c);
+      else if (
+        c.cssVar.includes("background") ||
+        c.cssVar.includes("foreground")
+      )
+        groups["Core"].push(c);
+      else groups["Other"].push(c);
+    });
+    return Object.fromEntries(
+      Object.entries(groups).filter(([_, t]) => t.length > 0)
+    );
+  }, [colors]);
+
+  const themeRadius = layout["radius"] || "0.5rem";
 
   return (
-    <div className="h-full overflow-auto p-6">
+    <div className="h-full overflow-auto p-6 transition-colors duration-300">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
-        <div>
-          <h2 className="text-xl font-semibold mb-1">Design Tokens</h2>
+        <header>
+          <h2 className="text-2xl font-semibold mb-1">Design System</h2>
           <p className="text-sm text-muted-foreground">
-            Color palette and design system variables
+            Color palette and font family
           </p>
-        </div>
+        </header>
 
         {/* Color Palette */}
         {Object.entries(groupedColors).map(([groupName, tokens]) => (
           <section key={groupName} className="space-y-4">
-            <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
+            <h3 className="text-xs font-bold uppercase tracking-widest opacity-50">
               {groupName}
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -117,83 +109,82 @@ export function StyleViewer({ style }: StyleViewerProps) {
           </section>
         ))}
 
-        {/* Typography Section */}
-        <section className="space-y-4">
-          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-            Typography
-          </h3>
-          <div className="bg-card rounded-xl border border-border p-6 space-y-4">
-            <div className="space-y-2">
-              <p className="text-xs text-muted-foreground">Font Family</p>
-              <p className="font-medium">Inter, sans-serif</p>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Heading</p>
-                <p className="text-2xl font-bold">Aa Bb Cc</p>
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Typography */}
+          <section className="space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-widest opacity-50">
+              Typography
+            </h3>
+            <div className="p-6 border rounded-lg">
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[10px] uppercase opacity-50 mb-1">
+                    Font Family
+                  </p>
+                  <p className="text-sm font-mono">
+                    {layout["font-sans"] || "System Sans"}
+                  </p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-4xl font-extrabold tracking-tighter">
+                    Headline XL
+                  </p>
+                  <p className="text-lg opacity-80">
+                    Body copy showing line-height and weight.
+                  </p>
+                </div>
               </div>
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Body</p>
-                <p className="text-base">Aa Bb Cc</p>
-              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        {/* Radius Section */}
-        <section className="space-y-4">
-          <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">
-            Border Radius
-          </h3>
-          <div className="flex gap-4">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 bg-primary rounded-sm" />
-              <span className="text-xs text-muted-foreground">sm</span>
+          {/* Border Radius */}
+          <section className="space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-widest opacity-50">
+              Border Radius
+            </h3>
+            <div className="flex flex-wrap gap-4 items-end">
+              {[0.5, 1, 1.5, 2].map((multiplier) => {
+                // Calculate scaled radius based on the base token
+                const baseVal = parseFloat(themeRadius);
+                const unit = themeRadius.replace(/[0-9.]/g, "");
+                const calculatedRadius = `${baseVal * multiplier}${unit}`;
+
+                return (
+                  <div
+                    key={multiplier}
+                    className="flex flex-col items-center gap-2"
+                  >
+                    <div
+                      className="w-16 h-16"
+                      style={{
+                        backgroundColor:
+                          colors.find((c) => c.cssVar.includes("primary"))
+                            ?.value || "currentColor",
+                        borderRadius: calculatedRadius,
+                      }}
+                    />
+                    <span className="text-[10px] font-mono">
+                      {calculatedRadius}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 bg-primary rounded-md" />
-              <span className="text-xs text-muted-foreground">md</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 bg-primary rounded-lg" />
-              <span className="text-xs text-muted-foreground">lg</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-16 h-16 bg-primary rounded-xl" />
-              <span className="text-xs text-muted-foreground">xl</span>
-            </div> 
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </div>
   );
 }
 
-interface ColorSwatchProps {
-  token: ColorToken;
-}
-
-function ColorSwatch({ token }: ColorSwatchProps) {
+function ColorSwatch({ token }: { token: DesignToken }) {
   return (
-    <button
-      className={cn(
-        'group flex flex-col rounded-xl border border-border overflow-hidden',
-        'hover:border-primary/50 hover:shadow-md transition-all'
-      )}
-    >
-      {/* Color Box */}
-      <div
-        className="h-20 w-full"
-        style={{ backgroundColor: `var(${token.cssVar})` }}
-      />
-      {/* Info */}
-      <div className="p-3 bg-card text-left">
-        <p className="font-medium text-sm truncate">{token.name}</p>
-        <p className="text-xs text-muted-foreground truncate mt-0.5">
-          {token.value}
-        </p>
+    <div className="group flex flex-col overflow-hidden border rounded-lg">
+      <div className="h-20 w-full" style={{ backgroundColor: token.value }} />
+      <div className="p-3 text-left">
+        <p className="font-semibold text-xs truncate">{token.name}</p>
+        <code className="text-[10px] opacity-60 block mt-1">{token.value}</code>
       </div>
-    </button>
+    </div>
   );
 }
-
