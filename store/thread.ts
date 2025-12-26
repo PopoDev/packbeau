@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { GeneratedProject } from '@/types/project';
+import { MOCK_PROJECT } from './mock-project';
 
 export interface ActionBadge {
   type: 'write';
@@ -19,7 +21,7 @@ export interface Thread {
   id: string;
   title: string;
   messages: Message[];
-  generatedCode: string;
+  generatedProject: GeneratedProject | null;
   createdAt: Date;
 }
 
@@ -37,7 +39,7 @@ interface ThreadStore {
     }
   ) => void;
   updateMessageThinking: (threadId: string, messageId: string, isThinking: boolean) => void;
-  updateGeneratedCode: (threadId: string, code: string) => void;
+  updateGeneratedProject: (threadId: string, project: GeneratedProject) => void;
   getThread: (threadId: string) => Thread | undefined;
 }
 
@@ -92,7 +94,7 @@ export const useThreadStore = create<ThreadStore>((set, get) => ({
           isThinking: true,
         },
       ],
-      generatedCode: '',
+      generatedProject: null,
       createdAt: new Date(),
     };
     
@@ -117,7 +119,7 @@ export const useThreadStore = create<ThreadStore>((set, get) => ({
                       }
                     : msg
                 ),
-                generatedCode: 'page.html',
+                generatedProject: MOCK_PROJECT,
               }
             : thread
         ),
@@ -226,11 +228,11 @@ export const useThreadStore = create<ThreadStore>((set, get) => ({
     }));
   },
   
-  updateGeneratedCode: (threadId: string, code: string) => {
+  updateGeneratedProject: (threadId: string, project: GeneratedProject) => {
     set((state) => ({
       threads: state.threads.map((thread) =>
         thread.id === threadId
-          ? { ...thread, generatedCode: code }
+          ? { ...thread, generatedProject: project }
           : thread
       ),
     }));

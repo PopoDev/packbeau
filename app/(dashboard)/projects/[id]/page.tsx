@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChatInput } from "@/components/ChatInput";
 import { ChatMessage } from "@/components/ChatMessage";
-import { CodePreview } from "@/components/CodePreview";
+import { Preview } from "@/components/projects/Preview";
 import { useThreadStore } from "@/store/thread";
 import { useParams, redirect, useRouter } from "next/navigation";
 import { Home, Pencil, ChevronDown, Zap } from "lucide-react";
@@ -130,7 +130,7 @@ export default function ProjectPage() {
 
       {/* Preview Panel */}
       <div className="flex flex-1 min-w-0 flex-col p-4 bg-background">
-        <CodePreview code={thread.generatedCode} />
+        <Preview project={thread.generatedProject} />
       </div>
     </div>
   );
