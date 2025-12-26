@@ -326,7 +326,7 @@ function generateComponentGalleryHTML(
     }
     
     #root {
-      padding: 20px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 48px;
@@ -356,17 +356,17 @@ function generateComponentGalleryHTML(
       border-radius: 12px;
       border: 1px solid rgba(0, 0, 0, 0.08);
       box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      padding: 0;
+      overflow: visible;
+      padding: 16px 0px;
       position: relative;
-      /* Create isolation context for fixed/absolute positioning */
-      isolation: isolate;
-      contain: layout style paint;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
     
     .component-wrapper > * {
-      /* This ensures the component content doesn't overflow */
       max-width: 100%;
+      width: 100%;
     }
   </style>
 </head>
@@ -387,6 +387,34 @@ function generateComponentGalleryHTML(
         if (Gallery) {
           var root = ReactDOM.createRoot(document.getElementById('root'));
           root.render(React.createElement(Gallery));
+          
+          // After render, handle fixed positioned parent elements
+          setTimeout(function() {
+            var wrappers = document.querySelectorAll('.component-wrapper');
+            wrappers.forEach(function(wrapper) {
+              // Only check direct children (component root elements), not nested children
+              var directChildren = Array.from(wrapper.children);
+              
+              directChildren.forEach(function(child) {
+                var computed = window.getComputedStyle(child);
+                
+                // If this direct child has fixed positioning, remove it
+                if (computed.position === 'fixed') {
+                  // Replace fixed with relative/static and use flex to center if needed
+                  child.style.position = 'relative';
+                  child.style.inset = 'auto'; // Clear top/left/right/bottom
+                  child.style.transform = 'none'; // Clear transforms
+                  
+                  // If it was centered (common for fixed headers), keep it centered
+                  if (computed.left === '50%' || child.style.left === '50%') {
+                    child.style.left = 'auto';
+                    child.style.transform = 'none';
+                    child.style.margin = '0 auto';
+                  }
+                }
+              });
+            });
+          }, 100);
           
           // Set up IntersectionObserver to track active section
           setTimeout(function() {
